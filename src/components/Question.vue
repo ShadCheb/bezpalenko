@@ -12,22 +12,29 @@
                 <p class="p-text__16">Отправь вопрос и наш специалист ответит на него:</p>
                 <form action="mail.php" class="form">
                     <label class="label">
-                        <input name="name" type="text" placeholder="Имя">
+                        <input name="name" type="text" 
+                          placeholder="Имя"
+                          v-model="dataList.name.value"
+                        >
                     </label>
                     <label class="label">
                         <input name="phone" 
                           type="text" 
-                          class="input__required input__phone"
-                          data-valid="phone"
+                          class="input__phone"
+                          :class="{'not-valid': dataList.phone.not_valid}"
                           placeholder="Телефон*"
+                          v-model="dataList.phone.value"
+                          @change="validInput('phone')"
                         >
                     </label>
                     <label class="label">
                         <input name="email" 
                           type="text" 
-                          class="input__required input__email"
-                          data-valid="email"
+                          class="input__email"
                           placeholder="Email*"
+                          :class="{'not-valid': dataList.email.not_valid}"
+                          v-model="dataList.email.value"
+                          @change="validInput('phone')"
                         >
                     </label>
                     <label class="label">
@@ -35,12 +42,15 @@
                           type="text" 
                           class="input__required input__message"
                           placeholder="Сообщение*"
+                          v-model="dataList.message.value"
                           rows="4"
                         ></textarea>
                     </label>
 
                     <label class="label-check">
-                      <input type="checkbox">
+                      <input type="checkbox"
+                        v-model="dataList.check.value"
+                      >
                         <span></span><p>Я даю согласие на обработку моих персональных данных</p>
                     </label>
 

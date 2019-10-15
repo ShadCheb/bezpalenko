@@ -42,7 +42,7 @@ export default {
     },
 
     select(index) {
-        this.selectValue = this.list[index];
+        this.selectValue = this.list[index].value;
         this.selectId = index;
 
         this.$emit('emitselect', this.selectValue);

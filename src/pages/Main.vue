@@ -147,28 +147,28 @@
             <div class="container">
                 <h2 class="caption__h2 caption--black"><span>5 фактов</span> о нашей школе</h2>
 
-                <article class="fact__blocks">
+                <article class="fact__blocks" id="counter-1">
                     <article class="fact__block fact__block--horizon">
-                        <p class="fact__number benefits__number">8</p>
+                        <p class="fact__number benefits__number" data-num="8">8</p>
                         <p class="fact__text">
                             лет учебной практики
                         </p>
                     </article>
                     <article class="fact__block fact__block--horizon">
-                        <p class="fact__number benefits__number">17</p>
+                        <p class="fact__number benefits__number" data-num="17">17</p>
                         <p class="fact__text">
                             авторских курсов
                         </p>
                     </article>
                     <article class="fact__block fact__block--vertical">
                         <p class="fact__text">более</p>
-                        <p class="fact__number benefits__number">9000</p>
+                        <p class="fact__number benefits__number" data-num="9000">9000</p>
                         <p class="fact__text">
                             учеников по всему миру
                         </p>
                     </article>
                     <article class="fact__block fact__block--vertical">
-                        <p class="fact__number benefits__number">1375</p>
+                        <p class="fact__number benefits__number" data-num="1375">1375</p>
                         <p class="fact__text">
                             студентов-чемпионов
                         </p>
@@ -183,7 +183,7 @@
                         </p>
                     </article>
                     <article class="fact__block fact__block--horizon">
-                        <p class="fact__number benefits__number">12</p>
+                        <p class="fact__number benefits__number"  data-num="12">12</p>
                         <p class="fact__text">
                             стран, где прошли наши курсы
                         </p>
@@ -779,7 +779,9 @@ export default {
       },
 
       modalRecord: false,
-      modalQuestion: false
+      modalQuestion: false,
+
+      animationNumber: false
     };
   },
   mounted() {
@@ -790,7 +792,49 @@ export default {
       this.getRequest();
 
       this.loadPlayer();
+
+      this.scrollWindow();
     },
+
+    // анимация цифр
+
+    scrollWindow() {
+      $(window).scroll(() => {
+        if (this.animationNumber) return;
+        
+        let cPos = $('#counter-1').offset().top;
+        let topWindow = $(window).scrollTop();
+
+        if (cPos < topWindow + 300) this.loadAnimationNumber();
+      });
+    },
+
+    loadAnimationNumber() {
+      let time = 2;
+      this.animationNumber = true;
+
+      $('.benefits__number').each(function() {
+        let num = +$(this).data('num');
+        let i = 1;
+        let step = 1000 * time / num;
+        let that = $(this);
+        let int;
+        let stepI = Math.ceil(num / 400);
+
+        $(this).addClass('viz');
+
+        int = setInterval(function() {
+          if (i + stepI < num) {
+            that.html(i);
+          } else {
+            that.html(num);
+            clearInterval(int);
+          }
+          i += stepI;
+        }, step);
+      });
+    },
+
     getRequest(){
       let link = this.getGet('link');
 
@@ -853,10 +897,10 @@ export default {
         if (!link) return;
 
         link = '#' + link;
-        let V = 0.2;
+        // let V = 0.2;
         let w = window.pageYOffset;  // прокрутка
         let t = document.querySelector(link).getBoundingClientRect().top;  // отступ от окна браузера до id
-        let start = null;
+        // let start = null;
 
         window.scrollTo(0,w + t);
     },

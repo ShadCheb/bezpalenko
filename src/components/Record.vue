@@ -10,34 +10,53 @@
             </div>
             <div class="modal__body">
                 <p class="p-text__16">Отправь заявку и наш специалист свяжется с тобой для записи:</p>
-                <form action="mail.php" class="form">
+                <form action="mail.php" class="form" :class="{load: send}">
                     <label class="label">
-                        <input name="name" type="text" placeholder="Имя">
+                        <input name="name" type="text" placeholder="Имя" 
+                          v-model="dataList.name.value"
+                        >
                     </label>
                     <label class="label">
                         <input name="phone" 
                           type="text" 
-                          class="input__required input__phone"
-                          data-valid="phone"
+                          class="input__phone"
+                          :class="{'not-valid': dataList.phone.not_valid}"
                           placeholder="Телефон*"
+                          v-model="dataList.phone.value"
+                          @change="validInput('phone')"
                         >
                     </label>
-
-                    <label class="label-check">
-                      <input type="checkbox">
-                        <span></span><p>Я даю согласие на обработку моих персональных данных</p>
-                    </label>
-
-                    <input type="hidden" name="type" value="record">
 
                     <app-select
                       :list="listCourse"
                       :default = "selectCours"
                       label="Выбери курс"
+                      @emitselect="selectCourse"
                     >
                     </app-select>
 
-                    <button type="submit" class="btn-7">Отправить</button>
+                    <label class="label-check">
+                      <input type="checkbox"
+                        v-model="dataList.check.value"
+                      >
+                        <span></span><p>Я даю согласие на обработку моих персональных данных</p>
+                    </label>
+
+                    <input type="hidden" name="type" value="record">
+
+                    <button type="submit" class="btn-7" 
+                      @click.prevent="submit"
+                      :disabled="send"
+                    >Отправить</button>
+
+                    <div class="alert-close" v-if="alertShow" @click="alertShow = false">
+                      <div 
+                        class="alert"
+                        :class="(alertDanger) ? 'alert-danger' : 'alert-success'"
+                      >
+                      {{ message }}
+                      </div>
+                    </div>
                 </form>
             </div>
         </div>
@@ -45,6 +64,7 @@
 </template>
 
 <script>
+import $ from 'jquery';
 import Select from './Select.vue';
 import SendMxin from '../send-mixin';
 
@@ -78,7 +98,32 @@ export default {
           value: 'Brow Master',
           id: 4
         }
-      ]
+      ],
+
+      dataList: {
+        name: {
+          value: ''
+        },
+        phone: {
+          value: '',
+          required: true,
+          valid: 'phone',
+          not_valid: false
+        },
+        check: {
+          value: false,
+          required: true,
+        },
+        course: {
+          value: ''
+        }
+      },
+
+      send: false,
+
+      alertDanger: false,
+      alertShow: false,
+      message: ''
     };
   },
   created() {
@@ -87,6 +132,12 @@ export default {
     document.body.style.cssText = 'overflow: hidden;';
   },
   methods: {
+    selectCourse(value) {
+      if (value) this.dataList.course.value = value;
+    },
+    validInput(input) {
+      if (this.dataList[input].not_valid) this.dataList[input].not_valid = false;
+    },
     selectDefaultCours() {
       let cours;
 
@@ -103,7 +154,8 @@ export default {
     closeModal() {
       document.body.style.cssText = '';
       this.$emit('emitclosemodal');
-    }
+    },
+    
   }
 }
 </script>
